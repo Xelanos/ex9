@@ -1,7 +1,13 @@
 from screen import Screen
+from ship import Ship
 import sys
+from math import sin, cos, radians
+import random
+
 
 DEFAULT_ASTEROIDS_NUM = 5
+RIGHT = -7
+LEFT = 7
 
 
 class GameRunner:
@@ -9,11 +15,11 @@ class GameRunner:
     def __init__(self, asteroids_amnt):
         #todo-yanir add asteriods
         self._screen = Screen()
-
         self.screen_max_x = Screen.SCREEN_MAX_X
         self.screen_max_y = Screen.SCREEN_MAX_Y
         self.screen_min_x = Screen.SCREEN_MIN_X
         self.screen_min_y = Screen.SCREEN_MIN_Y
+        self._ship = Ship(self.random_coordinate(), self.random_coordinate())
 
     def run(self):
         self._do_loop()
@@ -27,21 +33,65 @@ class GameRunner:
         self._screen.update()
         self._screen.ontimer(self._do_loop,5)
 
-    def move_objects(self):
-        # todo-or ship movement
-        # todo-yanir asteriod movement
-        pass
+    def move_object(self, obj):
+        """
+        moves an object withing the game.
+        function assumes object has get_position function that returns a
+        tuple of (x,y) coordinates and get_speed with the same return values.
+        also assume object has a position setter
+        """
+        old_x, old_y = obj.get_position()
+        x_speed, y_speed = obj.get_speed()
+        delta_axis = self.screen_max_x - self.screen_min_x
+        new_x = (x_speed + old_x - self.screen_min_x) % delta_axis\
+                + self.screen_min_x
+        new_y = (y_speed + old_y - self.screen_min_y) % delta_axis\
+                + self.screen_min_y
+        obj.set_position(new_x, new_y)
+
+    def ship_heading_change(self, ship):
+        """
+        changes the heading of the ship in correspondence to button pressed
+        :param ship: a ship obj
+        """
+        if self._screen.is_left_pressed():
+            ship.change_direction(LEFT)
+        if self._screen.is_right_pressed():
+            ship.change_direction(RIGHT)
+
+    def ship_accelerate(self, ship):
+        """
+        accelerate the ship if up was pressed
+        :param ship: a ship obj
+        """
+        if self._screen.is_up_pressed():
+            current_x_speed, current_y_speed = ship.get_speed()
+            ships_heading = ship.get_heading()
+            new_x_speed = current_x_speed + cos(radians(ships_heading))
+            new_y_speed = current_y_speed + sin(radians(ships_heading))
+            ship.set_speed(new_x_speed, new_y_speed)
+
+    def random_coordinate(self):
+        """
+        :return: a random coordinate on one axis of the screen
+        """
+        random_cod = random.randrange(self.screen_min_x, self.screen_max_x + 1)
+        return random_cod
+
 
     def asteroid_removal(self):
-        # todo-yanir asteriod removal
+        # todo-yanir asteroid removal
         pass
 
     def _game_loop(self):
-        #todo-or add ship
         '''
         Your code goes here!
         '''
-        pass
+        self._screen.draw_ship(*self._ship.ship_drawing_parameters())
+        self.move_object(self._ship)
+        self.ship_heading_change(self._ship)
+        self.ship_accelerate(self._ship)
+
 
 def main(amnt):
     runner = GameRunner(amnt)
