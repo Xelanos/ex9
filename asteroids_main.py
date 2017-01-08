@@ -32,7 +32,12 @@ class GameRunner:
         # todo-yanir asteriod movement
         pass
 
+    def asteroid_removal(self):
+        # todo-yanir asteriod removal
+        pass
+
     def _game_loop(self):
+        #todo-or add ship
         '''
         Your code goes here!
         '''
