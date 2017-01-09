@@ -1,6 +1,9 @@
-#todo-yanir asteriod init
 #todo-yanir asteriod object intersection
 #todo-yanir radius
+import random
+
+SLOWEST = 1
+FASTEST = 5
 
 class Asteriod:
 
@@ -11,23 +14,33 @@ class Asteriod:
         :param pos_y:
         :param size:
         """
-        self.__ast_pos_x = pos_x
-        self.__ast_pos_y = pos_y
+        self.__x_pos = pos_x
+        self.__y_pos = pos_y
+        self.__x_speed = self.random_speed()
+        self.__y_speed = self.random_speed()
         self.__ast_size = size
+
+    def random_speed(self):
+        """
+        Returns a random speed between SLOWEST to FASTEST
+        :return: speed
+        """
+        rnd_speed = random.randrange(SLOWEST, FASTEST)
+        return rnd_speed
 
     def get_position(self):
         """
         get the position
         :return: position as (x,y) tuple
         """
-        return self.__ast_pos_x, self.__ast_pos_y
+        return self.__x_pos, self.__y_pos
 
     def set_position(self, x, y):
         """
         sets the position
         """
-        self.__ast_pos_x = x
-        self.__ast_pos_xy = y
+        self.__x_pos = x
+        self.__y_pos = y
 
     def is_in_position(self, pos):
         """
@@ -53,3 +66,17 @@ class Asteriod:
         :param size:
         """
         self.__ast_size = size
+
+    def get_speed(self):
+        """
+        get the speed
+        :return: speed as (x_speed,y_speed) tuple
+        """
+        return self.__x_speed, self.__y_speed
+
+    def set_speed(self, x_speed, y_speed):
+        """
+        sets the speed
+        """
+        self.__x_speed = x_speed
+        self.__y_speed = y_speed

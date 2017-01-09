@@ -26,8 +26,6 @@ class GameRunner:
             astro = self.make_astro()
             self.__astro_list.append(astro)
             self._screen.register_asteroid(astro, astro.get_size())
-        for ast in self.__astro_list:
-            print(ast.get_position())
         self._torpedoes = []
 
     def run(self):
@@ -141,12 +139,28 @@ class GameRunner:
         # todo-yanir asteroid removal
         pass
 
+    def draw_asteroids(self):
+        """
+        Draws the asteroids on the screen
+        """
+        for ast in self.__astro_list:
+            self._screen.draw_asteroid(ast, *ast.get_position())
+
+    def move_asteroids(self):
+        """
+        Makes all the asteroids to move
+        """
+        for ast in self.__astro_list:
+            self.move_object(ast)
+
     def _game_loop(self):
         '''
         Your code goes here!
         '''
         self._screen.draw_ship(*self._ship.ship_drawing_parameters())
+        self.draw_asteroids()
         self.move_object(self._ship)
+        self.move_asteroids()
         self.ship_heading_change(self._ship)
         self.ship_accelerate(self._ship)
         self.fire_torpedo(self._ship)
