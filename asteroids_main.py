@@ -3,6 +3,7 @@ import sys
 from math import sin, cos, radians
 from screen import Screen
 from ship import Ship
+from asteriod import Asteriod
 from torpedo import Torpedo
 
 
@@ -14,13 +15,19 @@ LEFT = 7
 class GameRunner:
 
     def __init__(self, asteroids_amnt):
-        #todo-yanir add asteriods
         self._screen = Screen()
         self.screen_max_x = Screen.SCREEN_MAX_X
         self.screen_max_y = Screen.SCREEN_MAX_Y
         self.screen_min_x = Screen.SCREEN_MIN_X
         self.screen_min_y = Screen.SCREEN_MIN_Y
         self._ship = Ship(self.random_coordinate(), self.random_coordinate())
+        self.__astro_list = []
+        for i in range(asteroids_amnt):
+            astro = self.make_astro()
+            self.__astro_list.append(astro)
+            self._screen.register_asteroid(astro, astro.get_size())
+        for ast in self.__astro_list:
+            print(ast.get_position())
         self._torpedoes = []
 
     def run(self):
@@ -123,6 +130,12 @@ class GameRunner:
                                           torpedo.get_heading())
             else:
                 self.torpedo_remove(torpedo)
+
+    def make_astro(self):
+       ast = Asteriod(self.random_coordinate(), self.random_coordinate())
+       while ast.is_in_position(self._ship.get_position()):
+           ast.set_position(self.random_coordinate(),self.random_coordinate())
+       return ast
 
     def asteroid_removal(self):
         # todo-yanir asteroid removal
