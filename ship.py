@@ -1,3 +1,6 @@
+from math import sin, cos, radians
+from torpedo import Torpedo
+
 FULL_CIRCLE = 360
 
 
@@ -5,6 +8,7 @@ class Ship:
     """
     this is a class for a ship
     """
+    ACCEL_FACTOR = 1
 
     def __init__(self, x, y, heading=0, starting_life=3, radius=1):
         """
@@ -16,9 +20,9 @@ class Ship:
         :param radius: ships radius (1 by default)
         """
         self.__x_pos = x
-        self.__x_speed = 0
         self.__y_pos = y
-        self.__y_speed = 0
+        self.__x_speed = 0   # every ship starts stationary
+        self.__y_speed = 0   # every ship starts stationary
         self.__heading = float(heading)
         self.__life = starting_life
         self.__radius = radius
@@ -56,6 +60,16 @@ class Ship:
             self.__heading = new_heading
         else:
             self.__heading = FULL_CIRCLE + new_heading
+
+    def fire_torpedo(self):
+        """
+        fire a torpedo from the tip of the ship
+        :return:
+        """
+        torpedo = Torpedo(*self.get_position(), *self.get_speed(),
+                          self.get_heading())
+        return torpedo
+
 
     def lose_a_life(self):
         """

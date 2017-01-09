@@ -1,8 +1,9 @@
-from screen import Screen
-from ship import Ship
+import random
 import sys
 from math import sin, cos, radians
-import random
+from screen import Screen
+from ship import Ship
+from torpedo import Torpedo
 
 
 DEFAULT_ASTEROIDS_NUM = 5
@@ -20,6 +21,7 @@ class GameRunner:
         self.screen_min_x = Screen.SCREEN_MIN_X
         self.screen_min_y = Screen.SCREEN_MIN_Y
         self._ship = Ship(self.random_coordinate(), self.random_coordinate())
+        self._torpedoes = []
 
     def run(self):
         self._do_loop()
@@ -31,7 +33,21 @@ class GameRunner:
 
         # Set the timer to go off again
         self._screen.update()
-        self._screen.ontimer(self._do_loop,5)
+        self._screen.ontimer(self._do_loop, 5)
+
+    def accelerate_object(self, obj):
+        """
+        accelerate the object withing the game by the laws
+        :param obj: an object in the game
+        :return:
+        """
+        current_x_speed, current_y_speed = obj.get_speed()
+        new_x_speed = current_x_speed +\
+                      (obj.ACCEL_FACTOR * cos(radians(obj.get_heading())))
+        new_y_speed = current_y_speed + \
+                      (obj.ACCEL_FACTOR * sin(radians(obj.get_heading())))
+        obj.set_speed(new_x_speed, new_y_speed)
+
 
     def move_object(self, obj):
         """
@@ -65,11 +81,7 @@ class GameRunner:
         :param ship: a ship obj
         """
         if self._screen.is_up_pressed():
-            current_x_speed, current_y_speed = ship.get_speed()
-            ships_heading = ship.get_heading()
-            new_x_speed = current_x_speed + cos(radians(ships_heading))
-            new_y_speed = current_y_speed + sin(radians(ships_heading))
-            ship.set_speed(new_x_speed, new_y_speed)
+            self.accelerate_object(ship)
 
     def random_coordinate(self):
         """
@@ -78,6 +90,30 @@ class GameRunner:
         random_cod = random.randrange(self.screen_min_x, self.screen_max_x + 1)
         return random_cod
 
+    def fire_torpedo(self, ship):
+        """
+        fires a torpedo from the ship
+        :param ship: a ship object
+        """
+        if self._screen.is_space_pressed():
+            if len(self._torpedoes) < 15:
+                torpedo = ship.fire_torpedo()
+                self.accelerate_object(torpedo)
+                self._screen.register_torpedo(torpedo)
+                self._torpedoes.append(torpedo)
+
+    def torpedo_remove(self, torpedo):
+        self._screen.unregister_torpedo(torpedo)
+        self._torpedoes.remove(torpedo)
+
+    def torpedoes_update(self):
+        for torpedo in self._torpedoes:
+            if torpedo.alive():
+                self.move_object(torpedo)
+                self._screen.draw_torpedo(torpedo, *torpedo.get_position(),
+                                          torpedo.get_heading())
+            else:
+                self.torpedo_remove(torpedo)
 
     def asteroid_removal(self):
         # todo-yanir asteroid removal
@@ -91,6 +127,11 @@ class GameRunner:
         self.move_object(self._ship)
         self.ship_heading_change(self._ship)
         self.ship_accelerate(self._ship)
+        self.fire_torpedo(self._ship)
+        self.torpedoes_update()
+
+
+
 
 
 def main(amnt):
