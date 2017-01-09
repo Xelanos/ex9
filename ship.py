@@ -28,26 +28,49 @@ class Ship:
         self.__radius = radius
 
     def get_position(self):
+        """
+        get the position
+        :return: position as (x,y) tuple
+        """
         return self.__x_pos, self.__y_pos
 
     def set_position(self, x, y):
+        """
+        sets the position
+        """
         self.__x_pos = x
         self.__y_pos = y
 
     def get_speed(self):
+        """
+        get the speed
+        :return: speed as (x_speed,y_speed) tuple
+        """
         return self.__x_speed, self.__y_speed
 
     def set_speed(self, x_speed, y_speed):
+        """
+        sets the speed
+        """
         self.__x_speed = x_speed
         self.__y_speed = y_speed
 
     def get_heading(self):
+        """
+        :return: heading of the ship
+        """
         return self.__heading
 
     def get_radius(self):
+        """
+        :return: radius of the ship
+        """
         return self.__radius
 
     def ship_drawing_parameters(self):
+        """
+        :return: parameters needed to draw ship
+        """
         return self.__x_pos, self.__y_pos, self.__heading
 
     def change_direction(self, angle):
@@ -63,19 +86,19 @@ class Ship:
 
     def fire_torpedo(self):
         """
-        fire a torpedo from the tip of the ship
+        makes a torpedo at the tip of the ship
+        (meaning it has the ship speed,position and heading)
         :return:
         """
         torpedo = Torpedo(*self.get_position(), *self.get_speed(),
                           self.get_heading())
         return torpedo
 
-
-    def lose_a_life(self):
+    def lose_a_life(self, amount=1):
         """
         subtract one life from current ship life amount
         :return: if ship is dead return
         """
-        self.__life -= 1
+        self.__life -= amount
         if self.__life < 1:
             return #todo-or game lost

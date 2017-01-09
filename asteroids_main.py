@@ -103,10 +103,19 @@ class GameRunner:
                 self._torpedoes.append(torpedo)
 
     def torpedo_remove(self, torpedo):
+        """
+        removes a torpedo from the game
+        :param torpedo: a torpedo object
+        """
         self._screen.unregister_torpedo(torpedo)
         self._torpedoes.remove(torpedo)
 
     def torpedoes_update(self):
+        """
+        updates the state of all torpedoes currently in play.
+        including removing them if they are dead
+        :return:
+        """
         for torpedo in self._torpedoes:
             if torpedo.alive():
                 self.move_object(torpedo)

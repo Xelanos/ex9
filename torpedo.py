@@ -12,7 +12,7 @@ class Torpedo:
         :param y: starting y position
         :param heading: starting heading
         :param lifetime : torpedo lifetime (in cycles)
-        :param radius: ships radius (4 by default)
+        :param radius: torpedo radius (4 by default)
         """
         self.__x_pos = x
         self.__x_speed = x_speed
@@ -23,30 +23,51 @@ class Torpedo:
         self.__lifetime = lifetime
 
     def get_position(self):
+        """
+        get the position
+        :return: position as (x,y) tuple
+        """
         return self.__x_pos, self.__y_pos
 
     def set_position(self, x, y):
+        """
+        sets the position
+        torpedo loses one cycle of lifetime when moving
+        """
         self.__x_pos = x
         self.__y_pos = y
         self.__lifetime -= 1  # torpedo loses one cycle of lifetime for moving
 
     def get_speed(self):
+        """
+        get the speed
+        :return: speed as (x_speed,y_speed) tuple
+        """
         return self.__x_speed, self.__y_speed
 
     def set_speed(self, x_speed, y_speed):
+        """
+        sets the speed
+        """
         self.__x_speed = x_speed
         self.__y_speed = y_speed
 
     def get_heading(self):
+        """
+        :return: heading of the torpedo
+        """
         return self.__heading
 
     def get_radius(self):
+        """
+        :return: radius of the torpedo
+        """
         return self.__radius
 
-    def ship_drawing_parameters(self):
-        return self.__x_pos, self.__y_pos, self.__heading
-
     def alive(self):
+        """
+        checks if torpedo is still alive (has lifetimes cycles left)
+        """
         if self.__lifetime > 0:
             return True
         else:
