@@ -11,7 +11,11 @@ DEFAULT_ASTEROIDS_NUM = 5
 RIGHT = -7
 LEFT = 7
 SHIT_HIT_TITLE = "You've been hit"
-SHIP_HIT_MSG = "Ship has been hit"
+SHIP_HIT_MSG = "Ship has been hit \n ლ(ಠ益ಠლ)"
+OVER = 'GAME OVER'
+OUT_OF_LIFE = 'YOU DIED'
+QUIT = 'Rage quit? \n (ノಠ益ಠ)ノ彡┻━┻'
+WIN = 'GZ , you won!!!!\n ಠ‿↼ '
 SMALL_POINTS = 100
 MEDIUM_POINTS = 50
 LARGE_POINTS = 20
@@ -33,8 +37,7 @@ class GameRunner:
         self.__astro_list = []
         for i in range(asteroids_amnt):
             astro = self.make_astro()
-            self.__astro_list.append(astro)
-            self._screen.register_asteroid(astro, astro.get_size())
+            self.add_astro(astro)
         self._torpedoes = []
         self.__score = 0
 
@@ -155,10 +158,19 @@ class GameRunner:
                 self.torpedo_remove(torpedo)
 
     def make_astro(self):
-       ast = Asteriod(self.random_coordinate(), self.random_coordinate())
-       while ast.is_in_position(self._ship.get_position()):
-           ast.set_position(self.random_coordinate(),self.random_coordinate())
-       return ast
+        """
+
+        :return:
+        """
+        ast = Asteriod(self.random_coordinate(), self.random_coordinate())
+        while ast.is_in_position(self._ship.get_position()):
+            ast.set_position(self.random_coordinate(),
+                             self.random_coordinate())
+        return ast
+
+    def add_astro(self, asteroid):
+        self.__astro_list.append(asteroid)
+        self._screen.register_asteroid(asteroid, asteroid.get_size())
 
     def asteroid_removal(self, asteroid):
         self.__astro_list.remove(asteroid)
@@ -184,8 +196,7 @@ class GameRunner:
         if ship.lose_a_life():
             self.asteroid_removal(asteroid)
         else:
-            # GAME OVER
-            pass
+            self.end_game(OUT_OF_LIFE)
 
     def asteroid_torpedo_hit(self, asteroid, torpedo):
         """
@@ -195,34 +206,47 @@ class GameRunner:
         """
         old_ast_size = asteroid.get_size()
         ast_speed = asteroid.get_speed()
-        ast_pos = asteroid.get_pos()
+        ast_pos = asteroid.get_position()
+        norm_speed = sqrt(pow(ast_speed[AXIS_X],2) + pow(ast_speed[AXIS_Y],2))
         torpedo_speed = torpedo.get_speed()
         if old_ast_size == SIZE_SMALL:
             self.asteroid_removal(asteroid)
+            return
         else:
             new_ast_size = old_ast_size - 1
-            new_speed_x_1 = (torpedo_speed[AXIS_X] + ast_speed[AXIS_X]) / \
-                            (sqrt(pow(ast_speed[AXIS_X], 2) +
-                                  pow(ast_speed[AXIS_Y], 2)))
-            new_speed_x_2 = (torpedo_speed[AXIS_X] - ast_speed[AXIS_X]) / \
-                            (sqrt(pow(ast_speed[AXIS_X], 2) +
-                                  pow(ast_speed[AXIS_Y], 2)))
+            new_speed_x_1 = (torpedo_speed[AXIS_X] + ast_speed[AXIS_X]) /\
+                            norm_speed
             new_speed_y_1 = (torpedo_speed[AXIS_Y] + ast_speed[AXIS_Y]) / \
-                            (sqrt(pow(ast_speed[AXIS_X], 2) +
-                                  pow(ast_speed[AXIS_Y], 2)))
-            new_speed_y_2 = (torpedo_speed[AXIS_Y] - ast_speed[AXIS_Y]) / \
-                            (sqrt(pow(ast_speed[AXIS_X], 2) +
-                                  pow(ast_speed[AXIS_Y], 2)))
-
-
-
+                            norm_speed
+            # other asteroid speed is filliped
+            new_speed_x_2 = new_speed_x_1 * (-1)
+            new_speed_y_2 = new_speed_y_1 * (-1)
+        new_asteroid_1 = Asteriod(*ast_pos, new_ast_size)
+        new_asteroid_2 = Asteriod(*ast_pos, new_ast_size)
+        new_asteroid_1.set_speed(new_speed_x_1, new_speed_y_1)
+        new_asteroid_2.set_speed(new_speed_x_2, new_speed_y_2)
+        self.add_astro(new_asteroid_1)
+        self.add_astro(new_asteroid_2)
+        self.asteroid_removal(asteroid)
 
     def torpedo_collision(self, torpedo, asteroid):
+        """
+        function that is called upon when torpedo-asteroid collision
+        is detected
+        :param torpedo: hitting torpedo object
+        :param asteroid: asteroid hitted
+        """
         self.update_score(asteroid)
-
-
+        self.asteroid_torpedo_hit(asteroid,torpedo)
 
     def check_collisions(self, ship, asteroid_list, torpedo_list):
+        """
+        A function that check collisions between astroid and other objects
+        and calls the appropriate functions for thos collisions
+        :param ship: ship object
+        :param asteroid_list: a list of asteroid objects
+        :param torpedo_list: a list of torpedo objects
+        """
         for asteroid in asteroid_list:
             if asteroid.has_intersection(ship):
                 self.ship_collision(ship, asteroid)
@@ -231,11 +255,22 @@ class GameRunner:
                 for torpedo in torpedo_list:
                     if asteroid.has_intersection(torpedo):
                         self.torpedo_collision(torpedo, asteroid)
+                        self.torpedo_remove(torpedo)
+
+    def end_game(self, message):
+        """
+        A functions that put an end to the game with a message
+        """
+        self._screen.show_message(OVER, message)
+        self._screen.end_game()
+        sys.exit()
 
     def _game_loop(self):
         '''
         Your code goes here!
         '''
+        if self._screen.should_end():
+            self.end_game(QUIT)
         self._screen.draw_ship(*self._ship.ship_drawing_parameters())
         self.draw_asteroids()
         self.move_object(self._ship)
@@ -245,6 +280,9 @@ class GameRunner:
         self.fire_torpedo(self._ship)
         self.torpedoes_update()
         self.check_collisions(self._ship, self.__astro_list, self._torpedoes)
+        if len(self.__astro_list) == 0:
+            self.end_game(WIN)
+
 
 
 def main(amnt):
