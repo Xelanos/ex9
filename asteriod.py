@@ -1,9 +1,12 @@
 #todo-yanir asteriod object intersection
-#todo-yanir radius
+
 import random
+import math
 
 SLOWEST = 1
 FASTEST = 5
+SIZE_FACTOR = 10
+NORMAL = -5
 
 class Asteriod:
 
@@ -19,6 +22,8 @@ class Asteriod:
         self.__x_speed = self.random_speed()
         self.__y_speed = self.random_speed()
         self.__ast_size = size
+        self.__radius = size * SIZE_FACTOR + NORMAL
+
 
     def random_speed(self):
         """
@@ -80,3 +85,21 @@ class Asteriod:
         """
         self.__x_speed = x_speed
         self.__y_speed = y_speed
+
+    def get_radius(self):
+        """
+        :return: radius of the ship
+        """
+        return self.__radius
+
+    def has_intersection(self, obj):
+        """
+        Return if there was an intersection between the object and the asteroid
+        :param obj:
+        :return: True for intersection and False if there wasn't
+        """
+        obj_x, obj_y = obj.get_position()
+        ast_x, ast_y = self.get_position()
+        distance = math.sqrt(math.pow(obj_x-ast_x,2)+math.pow(obj_y - ast_y,2))
+        result = distance <= self.__radius + obj.get_radius()
+        return result

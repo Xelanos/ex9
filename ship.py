@@ -2,6 +2,8 @@ from math import sin, cos, radians
 from torpedo import Torpedo
 
 FULL_CIRCLE = 360
+DEAD = False
+ALIVE = True
 
 
 class Ship:
@@ -101,4 +103,6 @@ class Ship:
         """
         self.__life -= amount
         if self.__life < 1:
-            return #todo-or game lost
+            return DEAD
+        else:
+            return ALIVE
