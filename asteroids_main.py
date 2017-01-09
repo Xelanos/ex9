@@ -153,6 +153,22 @@ class GameRunner:
         for ast in self.__astro_list:
             self.move_object(ast)
 
+    def ship_collision(self, ship, asteroid):
+        pass
+
+    def torpedo_collision(self, torpedo, asteroid):
+        pass
+
+    def check_collisions(self, ship, asteroid_list, torpedo_list):
+        for asteroid in asteroid_list:
+            if asteroid.collion(ship):
+                self.ship_collision(ship, asteroid)
+                continue
+            else:
+                for torpedo in torpedo_list:
+                    if asteroid.collion(torpedo):
+                        self.torpedo_collision(torpedo, asteroid)
+
     def _game_loop(self):
         '''
         Your code goes here!
@@ -165,9 +181,6 @@ class GameRunner:
         self.ship_accelerate(self._ship)
         self.fire_torpedo(self._ship)
         self.torpedoes_update()
-
-
-
 
 
 def main(amnt):
