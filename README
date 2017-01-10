@@ -24,7 +24,12 @@ also includes an asteroids_main file that manages the whole game progress.
    (design by contract) and add a method to know if it's in a specific position.
    we choose the other way because then we can compare it's place to the ship's
    place in a better and more comfortable way.
-2.
+2. We were considering makeing another class called Asteroids that will be an
+   object of asteroids in the game. the class will do all the actions we did
+   inside the game manager with the Asteroids (add, remove, move and more)
+   and will be instead of the list. it's more organized and much more readable
+   but we choose the other option because there are not so many actions to do
+   and it seemed more easy to manage it with a list.
 
 
 ======================
