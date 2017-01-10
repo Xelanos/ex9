@@ -17,6 +17,14 @@ also includes an asteroids_main file that manages the whole game progress.
 ======================
 =       Answers      =
 ======================
+1. We were thinking to give to the asteroid the random place inside it's
+   class. the benefit of defining inside the class is logic because it's part
+   of the asteroid properties. an asteroid should be on a random place and the
+   person who is using this class shouldn't think about how it's done
+   (design by contract) and add a method to know if it's in a specific position.
+   we choose the other way because then we can compare it's place to the ship's
+   place in a better and more comfortable way.
+2.
 
 
 ======================
