@@ -1,3 +1,9 @@
+#############################################################
+# FILE: torpedo.py
+# EXERCISE: intro2cs ex9 2016-2017
+# DESCRIPTION: Torpedo class for the game
+#############################################################
+
 class Torpedo:
     """
     this is a class for a torpedo

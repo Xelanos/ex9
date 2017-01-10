@@ -1,3 +1,9 @@
+#############################################################
+# FILE: ship.py
+# EXERCISE: intro2cs ex9 2016-2017
+# DESCRIPTION: Ship class for the game
+#############################################################
+
 from math import sin, cos, radians
 from torpedo import Torpedo
 

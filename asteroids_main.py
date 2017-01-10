@@ -1,3 +1,9 @@
+#############################################################
+# FILE: asteroids_main.py
+# EXERCISE: intro2cs ex9 2016-2017
+# DESCRIPTION: Game manages for the asteroids game
+#############################################################
+
 import random
 import sys
 from math import sin, cos, radians, sqrt, pow

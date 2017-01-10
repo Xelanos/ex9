@@ -1,4 +1,8 @@
-#todo-yanir asteriod object intersection
+#############################################################
+# FILE: asteroid.py
+# EXERCISE: intro2cs ex9 2016-2017
+# DESCRIPTION: Asteroid class for the game
+#############################################################
 
 import random
 import math
