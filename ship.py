@@ -101,7 +101,8 @@ class Ship:
         subtract one life from current ship life amount
         :return: if ship is dead return
         """
-        self.__life -= amount
+        self.__life -= amount   # Takes down one life
+        # checking the game status
         if self.__life < 1:
             return DEAD
         else:

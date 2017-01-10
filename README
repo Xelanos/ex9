@@ -1,21 +1,28 @@
-Xelanos
-308484625
-Or Mizrahi
-
 =============================
-=  README for ex#: somthing  =
+=  README for ex9: Asteroids Game
 =============================
 
 
 ==================
 =  Description:  =
 ==================
+This program runs an Asteroid game that works by the games rules.
+It includes 3 classes:
+    1. Asteroid Class: defining an Asteroid in the game.
+    2. Ship Class: defining a ship in the game
+    3. Torpedo Class: Defining a torpedo in the class
+also includes an asteroids_main file that manages the whole game progress.
+
+
+======================
+=       Answers      =
+======================
 
 
 ======================
 =  Special Comments  =
 ======================
-I discussed the exercise with: myself (a great conversion partner)
-I also used:
+we discussed the exercise with: eachother (a great conversion partner)
+we used:
 http://stackoverflow.com/
 https://docs.python.org/3/library/

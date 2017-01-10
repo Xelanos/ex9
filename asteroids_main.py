@@ -28,17 +28,21 @@ AXIS_Y = 1
 class GameRunner:
 
     def __init__(self, asteroids_amnt):
+        # the next 5 lines define the game screen
         self._screen = Screen()
         self.screen_max_x = Screen.SCREEN_MAX_X
         self.screen_max_y = Screen.SCREEN_MAX_Y
         self.screen_min_x = Screen.SCREEN_MIN_X
         self.screen_min_y = Screen.SCREEN_MIN_Y
+        # making the ship
         self._ship = Ship(self.random_coordinate(), self.random_coordinate())
+        # the astro list will store the data about the asteroids in the game
         self.__astro_list = []
+        # making the asteroids
         for i in range(asteroids_amnt):
             astro = self.make_astro()
             self.add_astro(astro)
-        self._torpedoes = []
+        self._torpedoes = []    # will store the data about the torpedoes
         self.__score = 0
 
     def run(self):
@@ -60,6 +64,7 @@ class GameRunner:
         :return:
         """
         current_x_speed, current_y_speed = obj.get_speed()
+        # the net two lines calculates the new speed by the formula
         new_x_speed = current_x_speed +\
                       (obj.ACCEL_FACTOR * cos(radians(obj.get_heading())))
         new_y_speed = current_y_speed + \
@@ -72,15 +77,15 @@ class GameRunner:
         display on the screen
         """
         value = 0
-        size = asteroid.get_size()
+        size = asteroid.get_size()  # getting the hit asteroid size
         if size == SIZE_LARGE:
             value = LARGE_POINTS
         elif size == SIZE_MEDIUM:
             value = MEDIUM_POINTS
         elif size == SIZE_SMALL:
             value = SMALL_POINTS
-        self.__score += value
-        self._screen.set_score(self.__score)
+        self.__score += value   # updating the score
+        self._screen.set_score(self.__score)    # updating screen display
 
     def move_object(self, obj):
         """
@@ -91,12 +96,13 @@ class GameRunner:
         """
         old_x, old_y = obj.get_position()
         x_speed, y_speed = obj.get_speed()
+        # making the new place by the formula
         delta_axis = self.screen_max_x - self.screen_min_x
         new_x = (x_speed + old_x - self.screen_min_x) % delta_axis\
                 + self.screen_min_x
         new_y = (y_speed + old_y - self.screen_min_y) % delta_axis\
                 + self.screen_min_y
-        obj.set_position(new_x, new_y)
+        obj.set_position(new_x, new_y)  # setting the new place
 
     def ship_heading_change(self, ship):
         """
@@ -159,7 +165,7 @@ class GameRunner:
 
     def make_astro(self):
         """
-
+        makes an asteroid not at the ship position
         :return:
         """
         ast = Asteriod(self.random_coordinate(), self.random_coordinate())
@@ -169,10 +175,19 @@ class GameRunner:
         return ast
 
     def add_astro(self, asteroid):
+        """
+        gets an asteroid and adds it to the asteroids list and register it
+        :param asteroid:
+        """
         self.__astro_list.append(asteroid)
         self._screen.register_asteroid(asteroid, asteroid.get_size())
 
     def asteroid_removal(self, asteroid):
+        """
+        gets an asteroid, removes it from the list and unregister it
+        :param asteroid:
+        :return:
+        """
         self.__astro_list.remove(asteroid)
         self._screen.unregister_asteroid(asteroid)
 
@@ -191,11 +206,20 @@ class GameRunner:
             self.move_object(ast)
 
     def ship_collision(self, ship, asteroid):
+        """
+        actions to do in case the asteroid collision was with the ship
+        :param ship:
+        :param asteroid:
+        :return:
+        """
+        # Print message about the collision
         self._screen.show_message(SHIT_HIT_TITLE, SHIP_HIT_MSG)
-        self._screen.remove_life()
-        if ship.lose_a_life():
+        self._screen.remove_life()  # updating the life status on the screen
+        if ship.lose_a_life():  # takes down one life
+            # if the ship is still alive - remove asteroid
             self.asteroid_removal(asteroid)
         else:
+            # if no more life left, end the game
             self.end_game(OUT_OF_LIFE)
 
     def asteroid_torpedo_hit(self, asteroid, torpedo):
@@ -204,12 +228,14 @@ class GameRunner:
         :param asteroid:
         :param torpedo:
         """
-        old_ast_size = asteroid.get_size()
+        old_ast_size = asteroid.get_size()  # size before the hit
         ast_speed = asteroid.get_speed()
         ast_pos = asteroid.get_position()
+        # norm speed for the formula, looks better
         norm_speed = sqrt(pow(ast_speed[AXIS_X],2) + pow(ast_speed[AXIS_Y],2))
         torpedo_speed = torpedo.get_speed()
         if old_ast_size == SIZE_SMALL:
+            # if the asteroid is the smallest, remove it.
             self.asteroid_removal(asteroid)
             return
         else:
@@ -221,6 +247,8 @@ class GameRunner:
             # other asteroid speed is filliped
             new_speed_x_2 = new_speed_x_1 * (-1)
             new_speed_y_2 = new_speed_y_1 * (-1)
+        # the next lines makes two new asteroids and adds them by the games
+        # rules and removes the old asteroid
         new_asteroid_1 = Asteriod(*ast_pos, new_ast_size)
         new_asteroid_2 = Asteriod(*ast_pos, new_ast_size)
         new_asteroid_1.set_speed(new_speed_x_1, new_speed_y_1)
@@ -241,7 +269,7 @@ class GameRunner:
 
     def check_collisions(self, ship, asteroid_list, torpedo_list):
         """
-        A function that check collisions between astroid and other objects
+        A function that check collisions between asteroid and other objects
         and calls the appropriate functions for thos collisions
         :param ship: ship object
         :param asteroid_list: a list of asteroid objects
