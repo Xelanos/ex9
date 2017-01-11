@@ -75,7 +75,7 @@ class Ship:
         """
         return self.__radius
 
-    def ship_drawing_parameters(self):
+    def get_drawing_parameters(self):
         """
         :return: parameters needed to draw ship
         """

@@ -13,6 +13,9 @@ It includes 3 classes:
     3. Torpedo Class: Defining a torpedo in the class
 also includes an asteroids_main file that manages the whole game progress.
 
+NOTE: unlike the school solution, you can't die and win at the same time.
+if you run out of life, you LOSE, period.
+
 
 ======================
 =       Answers      =
@@ -21,7 +24,7 @@ also includes an asteroids_main file that manages the whole game progress.
    class. the benefit of defining inside the class is logic because it's part
    of the asteroid properties. an asteroid should be on a random place and the
    person who is using this class shouldn't think about how it's done
-   (design by contract) and add a method to know if it's in a specific position.
+  (design by contract) and add a method to know if it's in a specific position.
    we choose the other way because then we can compare it's place to the ship's
    place in a better and more comfortable way.
 2. We were considering makeing another class called Asteroids that will be an
@@ -31,11 +34,20 @@ also includes an asteroids_main file that manages the whole game progress.
    but we choose the other option because there are not so many actions to do
    and it seemed more easy to manage it with a list.
 
+3. When firing the torpedo, we made the ship fire the torpedo from it's tip
+   (with the same speed and heading) and then the gamerunner accelerate
+   and move it.
+   It's helpful because if we need to suddenly change the way the torpedo moves
+   we won't have to change function within the objects themself, and only
+   change how the game treats them.
+   It's also useful if we want to use the ship and torpedo for a different game
+   if we wish so, as they make no assumption about the movement inside the game
+
 
 ======================
 =  Special Comments  =
 ======================
-we discussed the exercise with: eachother (a great conversion partner)
+we discussed the exercise with: eachother
 we used:
 http://stackoverflow.com/
 https://docs.python.org/3/library/

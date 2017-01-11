@@ -46,8 +46,8 @@ class GameRunner:
         self.__astro_list = []
         # making the asteroids
         for i in range(asteroids_amnt):
-            astro = self.make_astro()
-            self.add_astro(astro)
+            astro = self._make_astro()
+            self._add_astro(astro)
         self._torpedoes = []    # will store the data about the torpedoes
         self.__score = 0
 
@@ -63,7 +63,7 @@ class GameRunner:
         self._screen.update()
         self._screen.ontimer(self._do_loop, 5)
 
-    def accelerate_object(self, obj):
+    def _accelerate_object(self, obj):
         """
         accelerate the object withing the game by the laws
         :param obj: an object in the game
@@ -77,7 +77,7 @@ class GameRunner:
                       (obj.ACCEL_FACTOR * sin(radians(obj.get_heading())))
         obj.set_speed(new_x_speed, new_y_speed)
 
-    def update_score(self, asteroid):
+    def _update_score(self, asteroid):
         """
         Updating the score value  according to the asteroid size changing the
         display on the screen
@@ -93,7 +93,7 @@ class GameRunner:
         self.__score += value   # updating the score
         self._screen.set_score(self.__score)    # updating screen display
 
-    def move_object(self, obj):
+    def _move_object(self, obj):
         """
         moves an object withing the game.
         function assumes object has get_position function that returns a
@@ -110,7 +110,7 @@ class GameRunner:
                 + self.screen_min_y
         obj.set_position(new_x, new_y)  # setting the new place
 
-    def ship_heading_change(self, ship):
+    def _ship_heading_change(self, ship):
         """
         changes the heading of the ship in correspondence to button pressed
         :param ship: a ship obj
@@ -120,13 +120,13 @@ class GameRunner:
         if self._screen.is_right_pressed():
             ship.change_direction(RIGHT)
 
-    def ship_accelerate(self, ship):
+    def _ship_accelerate(self, ship):
         """
         accelerate the ship if up was pressed
         :param ship: a ship obj
         """
         if self._screen.is_up_pressed():
-            self.accelerate_object(ship)
+            self._accelerate_object(ship)
 
     def random_coordinate(self):
         """
@@ -135,7 +135,7 @@ class GameRunner:
         random_cod = random.randrange(self.screen_min_x, self.screen_max_x + 1)
         return random_cod
 
-    def fire_torpedo(self, ship):
+    def _fire_torpedo(self, ship):
         """
         fires a torpedo from the ship
         :param ship: a ship object
@@ -143,11 +143,11 @@ class GameRunner:
         if self._screen.is_space_pressed():
             if len(self._torpedoes) < 15:
                 torpedo = ship.fire_torpedo()
-                self.accelerate_object(torpedo)
+                self._accelerate_object(torpedo)
                 self._screen.register_torpedo(torpedo)
                 self._torpedoes.append(torpedo)
 
-    def torpedo_remove(self, torpedo):
+    def _torpedo_remove(self, torpedo):
         """
         removes a torpedo from the game
         :param torpedo: a torpedo object
@@ -155,7 +155,7 @@ class GameRunner:
         self._screen.unregister_torpedo(torpedo)
         self._torpedoes.remove(torpedo)
 
-    def torpedoes_update(self):
+    def _torpedoes_update(self):
         """
         updates the state of all torpedoes currently in play.
         including removing them if they are dead
@@ -163,13 +163,13 @@ class GameRunner:
         """
         for torpedo in self._torpedoes:
             if torpedo.alive():
-                self.move_object(torpedo)
+                self._move_object(torpedo)
                 self._screen.draw_torpedo(torpedo, *torpedo.get_position(),
                                           torpedo.get_heading())
             else:
-                self.torpedo_remove(torpedo)
+                self._torpedo_remove(torpedo)
 
-    def make_astro(self):
+    def _make_astro(self):
         """
         makes an asteroid not at the ship position
         :return:
@@ -180,7 +180,7 @@ class GameRunner:
                              self.random_coordinate())
         return ast
 
-    def add_astro(self, asteroid):
+    def _add_astro(self, asteroid):
         """
         gets an asteroid and adds it to the asteroids list and register it
         :param asteroid:
@@ -188,7 +188,7 @@ class GameRunner:
         self.__astro_list.append(asteroid)
         self._screen.register_asteroid(asteroid, asteroid.get_size())
 
-    def asteroid_removal(self, asteroid):
+    def _asteroid_removal(self, asteroid):
         """
         gets an asteroid, removes it from the list and unregister it
         :param asteroid:
@@ -197,38 +197,37 @@ class GameRunner:
         self.__astro_list.remove(asteroid)
         self._screen.unregister_asteroid(asteroid)
 
-    def draw_asteroids(self):
+    def _draw_asteroids(self):
         """
         Draws the asteroids on the screen
         """
         for ast in self.__astro_list:
             self._screen.draw_asteroid(ast, *ast.get_position())
 
-    def move_asteroids(self):
+    def _move_asteroids(self):
         """
         Makes all the asteroids to move
         """
         for ast in self.__astro_list:
-            self.move_object(ast)
+            self._move_object(ast)
 
-    def ship_collision(self, ship, asteroid):
+    def _ship_collision(self, ship, asteroid):
         """
-        actions to do in case the asteroid collision was with the ship
+        actions to do in case the asteroid had a collision was with the ship
         :param ship:
         :param asteroid:
-        :return:
         """
         # Print message about the collision
         self._screen.show_message(SHIT_HIT_TITLE, SHIP_HIT_MSG)
         self._screen.remove_life()  # updating the life status on the screen
         if ship.lose_a_life():  # takes down one life
             # if the ship is still alive - remove asteroid
-            self.asteroid_removal(asteroid)
+            self._asteroid_removal(asteroid)
         else:
             # if no more life left, end the game
-            self.end_game(OUT_OF_LIFE)
+            self._end_game(OUT_OF_LIFE)
 
-    def asteroid_torpedo_hit(self, asteroid, torpedo):
+    def _asteroid_torpedo_hit(self, asteroid, torpedo):
         """
         Changing the asteroid size and speed according to the game rules
         :param asteroid:
@@ -242,7 +241,7 @@ class GameRunner:
         torpedo_speed = torpedo.get_speed()
         if old_ast_size == SIZE_SMALL:
             # if the asteroid is the smallest, remove it.
-            self.asteroid_removal(asteroid)
+            self._asteroid_removal(asteroid)
             return
         else:
             new_ast_size = old_ast_size - 1
@@ -259,21 +258,21 @@ class GameRunner:
         new_asteroid_2 = Asteriod(*ast_pos, new_ast_size)
         new_asteroid_1.set_speed(new_speed_x_1, new_speed_y_1)
         new_asteroid_2.set_speed(new_speed_x_2, new_speed_y_2)
-        self.add_astro(new_asteroid_1)
-        self.add_astro(new_asteroid_2)
-        self.asteroid_removal(asteroid)
+        self._add_astro(new_asteroid_1)
+        self._add_astro(new_asteroid_2)
+        self._asteroid_removal(asteroid)
 
-    def torpedo_collision(self, torpedo, asteroid):
+    def _torpedo_collision(self, torpedo, asteroid):
         """
         function that is called upon when torpedo-asteroid collision
         is detected
         :param torpedo: hitting torpedo object
         :param asteroid: asteroid hitted
         """
-        self.update_score(asteroid)
-        self.asteroid_torpedo_hit(asteroid,torpedo)
+        self._update_score(asteroid)
+        self._asteroid_torpedo_hit(asteroid, torpedo)
 
-    def check_collisions(self, ship, asteroid_list, torpedo_list):
+    def _check_collisions(self, ship, asteroid_list, torpedo_list):
         """
         A function that check collisions between asteroid and other objects
         and calls the appropriate functions for thos collisions
@@ -283,15 +282,15 @@ class GameRunner:
         """
         for asteroid in asteroid_list:
             if asteroid.has_intersection(ship):
-                self.ship_collision(ship, asteroid)
+                self._ship_collision(ship, asteroid)
                 continue
             else:
                 for torpedo in torpedo_list:
                     if asteroid.has_intersection(torpedo):
-                        self.torpedo_collision(torpedo, asteroid)
-                        self.torpedo_remove(torpedo)
+                        self._torpedo_collision(torpedo, asteroid)
+                        self._torpedo_remove(torpedo)
 
-    def end_game(self, message):
+    def _end_game(self, message):
         """
         A functions that put an end to the game with a message
         """
@@ -301,21 +300,21 @@ class GameRunner:
 
     def _game_loop(self):
         '''
-        Your code goes here!
+        A loop that runs every function that the game does
         '''
         if self._screen.should_end():
-            self.end_game(QUIT)
-        self._screen.draw_ship(*self._ship.ship_drawing_parameters())
-        self.draw_asteroids()
-        self.move_object(self._ship)
-        self.move_asteroids()
-        self.ship_heading_change(self._ship)
-        self.ship_accelerate(self._ship)
-        self.fire_torpedo(self._ship)
-        self.torpedoes_update()
-        self.check_collisions(self._ship, self.__astro_list, self._torpedoes)
+            self._end_game(QUIT)
+        self._screen.draw_ship(*self._ship.get_drawing_parameters())
+        self._draw_asteroids()
+        self._move_object(self._ship)
+        self._move_asteroids()
+        self._ship_heading_change(self._ship)
+        self._ship_accelerate(self._ship)
+        self._fire_torpedo(self._ship)
+        self._torpedoes_update()
+        self._check_collisions(self._ship, self.__astro_list, self._torpedoes)
         if len(self.__astro_list) == 0:
-            self.end_game(WIN)
+            self._end_game(WIN)
 
 
 
